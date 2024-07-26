@@ -1,4 +1,6 @@
 import streamlit as st
+from pdf2image import convert_from_path
+from convert_pdf_to_images import convert_specific_pages
 
 
 def main():
@@ -65,8 +67,62 @@ def show_analyse_question_paper():
     st.header("Analyse Question Paper")
     st.subheader("Upload question paper and get in analysed in detail.")
 
-    option = st.sidebar.selectbox("Select number of Question Papers you want to analyse at once", ["One", "Two", "Three"
-                                                                                                   ])
+    number_of_papers = st.sidebar.selectbox("Number of Question Papers to be analysed at once : ", ["One", "Two",
+                                                                                                    "Three"])
+
+    process_page = st.sidebar.selectbox("Process :", ["Every page", "Every Even-numbered page", "Every odd-numbered "
+                                                                                                "page"])
+
+    if number_of_papers == "One":
+        uploaded_paper_one = st.file_uploader("Upload your Question Paper 1", type=["pdf"])
+        if st.button("Analyze Paper"):
+            if uploaded_paper_one is not None:
+                pass
+            else:
+                st.error("Please upload a PDF file.")
+
+        all_pages = []
+        if process_page == "Every page":
+            pdf_one = uploaded_paper_one
+            total_pages = len(convert_from_path(pdf_one))
+            for page_number in range(1, total_pages + 1):
+                all_pages.append(page_number)
+            images = convert_specific_pages(pdf_one, all_pages)
+
+        if process_page == "Every Even-numbered page":
+            pdf_one = uploaded_paper_one
+            total_pages = len(convert_from_path(pdf_one))
+            for page_number in range(1, total_pages + 1):
+                if page_number % 2 == 0:
+                    all_pages.append(page_number)
+            images = convert_specific_pages(pdf_one, all_pages)
+
+        if process_page == "Every Odd-numbered page":
+            pdf_one = uploaded_paper_one
+            total_pages = len(convert_from_path(pdf_one))
+            for page_number in range(1, total_pages + 1):
+                if page_number % 2 != 0:
+                    all_pages.append(page_number)
+            images = convert_specific_pages(pdf_one, all_pages)
+
+    if number_of_papers == "Two":
+        uploaded_paper_one = st.file_uploader("Upload your Question Paper 1", type=["pdf"])
+        uploaded_paper_two = st.file_uploader("Upload your Question Paper 2", type=["pdf"])
+        if st.button("Analyze Paper"):
+            if uploaded_paper_one is not None and uploaded_paper_two is not None:
+                pass
+            else:
+                st.error("Please upload a PDF file.")
+
+    if number_of_papers == "Three":
+        uploaded_paper_one = st.file_uploader("Upload your Question Paper 1", type=["pdf"])
+        uploaded_paper_two = st.file_uploader("Upload your Question Paper 2", type=["pdf"])
+        uploaded_paper_three = st.file_uploader("Upload your Question Paper 3", type=["pdf"])
+        if st.button("Analyze Paper"):
+            if uploaded_paper_one is not None and uploaded_paper_two is not None and uploaded_paper_three is not None:
+                pass
+            else:
+                st.error("Please upload a PDF file.")
 
 
 def show_generate_mock_test():

@@ -1,10 +1,21 @@
 from pdf2image import convert_from_path
 
 
-def convert_specific_pages(pdf_path, page_numbers, output_folder=None):
+def convert_specific_pages(pdf_path, page_type, total_pages, output_folder=None):
     images = []
-    for page in page_numbers:
-        image = convert_from_path(pdf_path, first_page=page, last_page=page, fmt='jpeg')
-        images.extend(image)
+    if page_type == "Every page":
+        for page_number in range(1, total_pages + 1):
+            image = convert_from_path(pdf_path, first_page=page, last_page=page, fmt='jpeg')
+            images.extend(image)
+    if page_type == "Every Even-numbered page":
+        for page_number in range(1, total_pages + 1):
+            if page_number % 2 == 0:
+                image = convert_from_path(pdf_path, first_page=page, last_page=page, fmt='jpeg')
+                images.extend(image)
+    if page_type == "Every Odd-numbered page":
+        for page_number in range(1, total_pages + 1):
+            if page_number % 2 != 0:
+                image = convert_from_path(pdf_path, first_page=page, last_page=page, fmt='jpeg')
+                images.extend(image)
     return images
 

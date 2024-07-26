@@ -81,29 +81,20 @@ def show_analyse_question_paper():
             else:
                 st.error("Please upload a PDF file.")
 
-        all_pages = []
         if process_page == "Every page":
             pdf_one = uploaded_paper_one
             total_pages = len(convert_from_path(pdf_one))
-            for page_number in range(1, total_pages + 1):
-                all_pages.append(page_number)
-            images = convert_specific_pages(pdf_one, all_pages)
+            images_paper_one = convert_specific_pages(pdf_one, "Every page", total_pages)
 
         if process_page == "Every Even-numbered page":
             pdf_one = uploaded_paper_one
             total_pages = len(convert_from_path(pdf_one))
-            for page_number in range(1, total_pages + 1):
-                if page_number % 2 == 0:
-                    all_pages.append(page_number)
-            images = convert_specific_pages(pdf_one, all_pages)
+            images_paper_one = convert_specific_pages(pdf_one, "Every Even-numbered page", total_pages)
 
         if process_page == "Every Odd-numbered page":
             pdf_one = uploaded_paper_one
             total_pages = len(convert_from_path(pdf_one))
-            for page_number in range(1, total_pages + 1):
-                if page_number % 2 != 0:
-                    all_pages.append(page_number)
-            images = convert_specific_pages(pdf_one, all_pages)
+            images_paper_one = convert_specific_pages(pdf_one, "Every Odd-numbered page", total_pages)
 
     if number_of_papers == "Two":
         uploaded_paper_one = st.file_uploader("Upload your Question Paper 1", type=["pdf"])

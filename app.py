@@ -1,6 +1,7 @@
 import streamlit as st
 import google.generativeai as genai
 from support_file import perform_analysis
+from support_file import perform_analysis_while_mock_test_generation
 
 llm_model = genai.GenerativeModel('gemini-1.5-flash')
 
@@ -110,9 +111,21 @@ def show_generate_mock_test():
     st.header("Generate Mock Test")
     st.subheader("Upload question paper and get mock test.")
 
+    pages_to_be_processed = st.sidebar.selectbox("Process :",
+                                                 ["Every page", "Every Even-numbered page", "Every Odd-numbered "
+                                                                                            "page"])
+
+    question_type = st.sidebar.selectbox("Type of questions to be generated :",
+                                                 ["Multiple-choice", "Descriptive"])
+
     uploaded_model_paper = st.file_uploader("Upload model Question Paper", type=["pdf"])
     if st.button("Generate mock test"):
         if uploaded_model_paper is not None:
+            generated_questions = perform_analysis_while_mock_test_generation(uploaded_model_paper, question_type,
+                                                                              pages_to_be_processed, llm_model)
+            for image_file, response in generated_questions.items():
+                st.write(f"Page: {image_file}")
+                st.write(f"Response: {response}\n")
             pass
         else:
             st.error("Please upload a PDF file.")

@@ -1,8 +1,11 @@
 import textwrap
 from llm_interaction import provide_images_and_extract_topics_from_llm
 from llm_interaction import generate_llm_text_response
+from llm_interaction import provide_topic_names_to_llm_to_get_questions
 from prompts_to_llm import analyse_page_by_page_prompt
 from prompts_to_llm import combined_analysis_of_every_page_prompt
+from prompts_to_llm import analyse_paper_while_generating_mock_test_prompt
+from prompts_to_llm import generate_questions_prompt
 from temporary_file_creation import save_images_temporarily
 from temporary_file_creation import load_images_from_temporary_folder
 
@@ -35,3 +38,15 @@ def perform_analysis(question_paper, pages_to_be_processed, llm_model):
     analysis_of_question_paper = to_markdown(combined_analysis_for_user)
 
     return analysis_of_question_paper
+
+
+def perform_analysis_while_mock_test_generation(question_paper, question_type, pages_to_be_processed, llm_model):
+    path_of_images_of_paper_one, folder_path = save_images_temporarily(question_paper,
+                                                                       pages_to_be_processed)
+    load_saved_images = load_images_from_temporary_folder(folder_path)
+    prompt_for_analysing_paper = analyse_paper_while_generating_mock_test_prompt()
+    topic_names = provide_images_and_extract_topics_from_llm(load_saved_images, prompt_for_analysing_paper, llm_model)
+    questions_generate_prompt = generate_questions_prompt(question_type)
+    generated_questions = provide_topic_names_to_llm_to_get_questions(topic_names, questions_generate_prompt, llm_model)
+
+    return generated_questions

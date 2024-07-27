@@ -2,6 +2,7 @@ import tempfile
 from pdf2image import convert_from_path
 from convert_pdf_to_images import convert_specific_pages
 import streamlit as st
+from PIL import Image
 import os
 
 
@@ -28,7 +29,7 @@ def save_images_temporarily(uploaded_question_paper, pages_to_save):
             images_of_paper = convert_specific_pages(pdf_one, "Every Odd-numbered page", total_pages)'''
 
         temp_folder_containing_images = tempfile.mkdtemp()
-        st.write(temp_folder_containing_images) # address of folder containing the images to be processed.
+        st.write(temp_folder_containing_images)  # address of folder containing the images to be processed.
 
         saved_list_of_temp_images_of_question_paper = []
         for image_number, image in enumerate(images_of_paper):
@@ -36,12 +37,22 @@ def save_images_temporarily(uploaded_question_paper, pages_to_save):
             temp_file_name = os.path.join(temp_folder_containing_images, f'image_{image_number + 1}.jpeg')
             image.save(temp_file_name, "JPEG")
             saved_list_of_temp_images_of_question_paper.append(temp_file_name)
-        
+
         # st.success("Analysis complete!")
         # st.write(saved_list_of_temp_images_of_question_paper)
         # if delete=True, page count error pops up
 
     except Exception as e:
         st.error(f"An error occurred while processing the PDF: {e}")
-        
-    return saved_list_of_temp_images_of_question_paper
+
+    return saved_list_of_temp_images_of_question_paper, temp_folder_containing_images
+
+
+def load_images_from_temporary_folder(folder_path):
+    images = {}
+    image_files = [f for f in os.listdir(folder_path) if f.lower().endswith(('png', 'jpg', 'jpeg', 'tiff', 'bmp'))]
+    for image_file in image_files:
+        image_path = os.path.join(folder_path, image_file)
+        image = Image.open(image_path)
+        images[image_file] = image
+    return images

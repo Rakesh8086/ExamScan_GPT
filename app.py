@@ -99,7 +99,6 @@ def show_analyse_question_paper():
                 combined_analysis_for_user = generate_llm_text_response(llm_model, responses_and_prompt_combined)
                 analysis_of_question_paper = to_markdown(combined_analysis_for_user)
                 st.markdown(analysis_of_question_paper)
-
                 pass
             else:
                 st.error("Please upload a PDF file.")

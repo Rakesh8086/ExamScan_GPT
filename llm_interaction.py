@@ -1,5 +1,6 @@
 import time
 from pylatexenc.latex2text import LatexNodes2Text
+import streamlit as st
 
 
 def process_image_with_llm(text_prompt, image, model):
@@ -32,7 +33,7 @@ def provide_images_and_extract_topics_from_llm(images, text_prompt, model):
 
             # If less than 60 seconds have passed, sleep for the remaining time
             if elapsed_time < 60:
-                print('waiting')
+                st.write('Please Wait, your paper is being analysed.')
                 time.sleep(60 - elapsed_time)
 
             # Reset the counter and start time
@@ -58,14 +59,13 @@ def provide_topic_names_to_llm_to_get_questions(topic_names, generate_question_p
         response_counter += 1
 
     # Check if 13 images have been processed
-    if response_counter >= 13:
+    if response_counter >= 12:
         # Calculate elapsed time
         elapsed_time = time.time() - start_time
 
         # If less than 60 seconds have passed, sleep for the remaining time
         if elapsed_time < 60:
-            print('waiting')
-            time.sleep(60 - elapsed_time)
+            st.write('Please Wait, the mock test is being generated.')
 
         # Reset the counter and start time
         response_counter = 0

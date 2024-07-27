@@ -2,7 +2,7 @@ from pdf2image import convert_from_path
 
 
 def convert_specific_pages(pdf_path, page_type, total_pages, output_folder=None):
-    print(pdf_path)
+    # print(pdf_path)
     images = []
     if page_type == "Every page":
         for page_number in range(1, total_pages + 1):

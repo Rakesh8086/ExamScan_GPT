@@ -1,8 +1,5 @@
 import streamlit as st
-from pdf2image import convert_from_path
-from convert_pdf_to_images import convert_specific_pages
-import tempfile
-
+from temporary_file_creation import save_images_temporarily
 
 
 def main():
@@ -72,49 +69,15 @@ def show_analyse_question_paper():
     number_of_papers = st.sidebar.selectbox("Number of Question Papers to be analysed at once : ", ["One", "Two",
                                                                                                     "Three"])
 
-    process_page = st.sidebar.selectbox("Process :", ["Every page", "Every Even-numbered page", "Every odd-numbered "
+    pages_to_be_processed = st.sidebar.selectbox("Process :", ["Every page", "Every Even-numbered page", "Every Odd-numbered "
                                                                                                 "page"])
 
     if number_of_papers == "One":
         uploaded_paper_one = st.file_uploader("Upload your Question Paper 1", type=["pdf"])
-        pdf_one = ""
-        total_pages = 0
-        images_paper_one = []
         if st.button("Analyze Paper"):
             if uploaded_paper_one is not None:
-                # Save the uploaded PDF to a temporary file
-                with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_file:
-                    tmp_file.write(uploaded_paper_one.read())
-                    pdf_as_path = tmp_file.name
-                    st.write(pdf_as_path)
-
-                try:
-                    total_pages = len(convert_from_path(pdf_as_path))
-                    st.write(total_pages)
-
-                    images_paper_one = convert_specific_pages(pdf_as_path, process_page, total_pages)
-
-                    '''if process_page == "Every page":
-                        images_paper_one = convert_specific_pages(pdf_one, "Every page", total_pages)
-
-                    if process_page == "Every Even-numbered page":
-                        images_paper_one = convert_specific_pages(pdf_one, "Every Even-numbered page", total_pages)
-
-                    if process_page == "Every Odd-numbered page":
-                        images_paper_one = convert_specific_pages(pdf_one, "Every Odd-numbered page", total_pages)'''
-
-                    temp_image_files = []
-                    for idx, image in enumerate(images_paper_one):
-                        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.jpeg')
-                        image.save(temp_file.name, "JPEG")
-                        temp_image_files.append(temp_file.name)
-
-                    st.success("Analysis complete!")
-                    st.write(temp_image_files)
-
-                except Exception as e:
-                    st.error(f"An error occurred while processing the PDF: {e}")
-
+                images_paper_one = save_images_temporarily(uploaded_paper_one, pages_to_be_processed)
+                # st.write(images_paper_one)
                 pass
             else:
                 st.error("Please upload a PDF file.")

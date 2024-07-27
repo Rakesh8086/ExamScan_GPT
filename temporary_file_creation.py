@@ -2,6 +2,7 @@ import tempfile
 from pdf2image import convert_from_path
 from convert_pdf_to_images import convert_specific_pages
 import streamlit as st
+import os
 
 
 def save_images_temporarily(uploaded_question_paper, pages_to_save):
@@ -9,11 +10,11 @@ def save_images_temporarily(uploaded_question_paper, pages_to_save):
     with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_file:
         tmp_file.write(uploaded_question_paper.read())
         pdf_as_path = tmp_file.name
-        st.write(pdf_as_path)
+        # st.write(pdf_as_path)
 
     try:
         total_pages = len(convert_from_path(pdf_as_path))
-        st.write(total_pages)
+        # t.write(total_pages)
 
         images_of_paper = convert_specific_pages(pdf_as_path, pages_to_save, total_pages)
 
@@ -26,17 +27,21 @@ def save_images_temporarily(uploaded_question_paper, pages_to_save):
         if pages_to_save == "Every Odd-numbered page":
             images_of_paper = convert_specific_pages(pdf_one, "Every Odd-numbered page", total_pages)'''
 
-        temp_image_files_paper_one = []
-        for idx, image in enumerate(images_of_paper):
-            temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.jpeg')
-            image.save(temp_file.name, "JPEG")
-            temp_image_files_paper_one.append(temp_file.name)
+        temp_folder_containing_images = tempfile.mkdtemp()
+        st.write(temp_folder_containing_images) # address of folder containing the images to be processed.
 
+        saved_list_of_temp_images_of_question_paper = []
+        for image_number, image in enumerate(images_of_paper):
+            # Create a meaningful file name
+            temp_file_name = os.path.join(temp_folder_containing_images, f'image_{image_number + 1}.jpeg')
+            image.save(temp_file_name, "JPEG")
+            saved_list_of_temp_images_of_question_paper.append(temp_file_name)
+        
         # st.success("Analysis complete!")
-        # st.write(temp_image_files_paper_one)
+        # st.write(saved_list_of_temp_images_of_question_paper)
         # if delete=True, page count error pops up
 
     except Exception as e:
         st.error(f"An error occurred while processing the PDF: {e}")
         
-    return images_of_paper
+    return saved_list_of_temp_images_of_question_paper

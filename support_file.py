@@ -28,7 +28,7 @@ def to_markdown(text):
 
 
 def perform_analysis(question_paper, pages_to_be_processed, llm_model):
-    path_of_images_of_paper_one, folder_path = save_images_temporarily(question_paper,
+    path_of_images_of_uploaded_paper, folder_path = save_images_temporarily(question_paper,
                                                                        pages_to_be_processed)
     load_saved_images = load_images_from_temporary_folder(folder_path)
     try:
@@ -59,7 +59,8 @@ def perform_analysis(question_paper, pages_to_be_processed, llm_model):
 
 
 def perform_analysis_while_mock_test_generation(question_paper, question_type, pages_to_be_processed, llm_model):
-    path_of_images_of_paper_one, folder_path = save_images_temporarily(question_paper, pages_to_be_processed)
+    path_of_images_of_uploaded_paper, folder_path, total_pages = save_images_temporarily(question_paper,
+                                                                                         pages_to_be_processed)
     load_saved_images = load_images_from_temporary_folder(folder_path)
 
     try:
@@ -87,9 +88,6 @@ def perform_analysis_while_mock_test_generation(question_paper, question_type, p
         st.error(f"Error in generating mock test: {str(e)}")
         return
 
-    return generated_questions
-
-
-
+    return generated_questions, total_pages
 
 

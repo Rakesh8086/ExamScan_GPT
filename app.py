@@ -5,19 +5,18 @@ from support_file import perform_analysis_on_multiple_papers
 from support_file import perform_analysis_while_mock_test_generation
 from support_file import combine_analysis_of_two_papers_and_prompt
 from support_file import to_markdown
+from support_file import generate_mind_map_data
 from llm_interaction import generate_llm_text_response
 from prompts_to_llm import analysis_of_multiple_papers_prompt
+from mind_map_generator import generate_mind_map_from_list
 import time
-
 
 llm_model = genai.GenerativeModel('gemini-1.5-flash')
 
 
 def main():
     st.sidebar.header("Navigation")
-    page = st.sidebar.selectbox("Choose a page", ["Home", "Analyse Question Paper", "Generate Mock Test", "Generate "
-                                                                                                          "Mind Map",
-                                                  "Analyse Syllabus"])
+    page = st.sidebar.selectbox("Choose a page", ["Home", "Analyse Question Paper", "Generate Mock Test"])
 
     if page == "Home":
         show_home()
@@ -25,10 +24,6 @@ def main():
         show_analyse_question_paper()
     elif page == "Generate Mock Test":
         show_generate_mock_test()
-    elif page == "Generate Mind Map":
-        show_generate_mind_map()
-    elif page == "Analyse Syllabus":
-        show_analyse_syllabus()
 
 
 def show_home():
@@ -51,7 +46,7 @@ def show_analyse_question_paper():
     st.subheader("Upload question paper and get in analysed in detail.")
 
     number_of_papers = st.sidebar.selectbox("Number of Question Papers to be analysed at once : ", ["One", "Two",
-                                                                                                    "Three"])
+                                                                                                    ])
 
     pages_to_be_processed = st.sidebar.selectbox("Process :",
                                                  ["Every page", "Every Even-numbered page", "Every Odd-numbered "
@@ -79,20 +74,11 @@ def show_analyse_question_paper():
                                                                                      pages_to_be_processed, llm_model)
                 combined_analysis_prompt = analysis_of_multiple_papers_prompt()
                 combined_text = combine_analysis_of_two_papers_and_prompt(analysis_of_question_paper_one,
-                                                             analysis_of_question_paper_two, combined_analysis_prompt)
+                                                                          analysis_of_question_paper_two,
+                                                                          combined_analysis_prompt)
                 analysis_of_two_question_papers = generate_llm_text_response(llm_model, combined_text)
                 analysis_of_two_question_papers = to_markdown(analysis_of_two_question_papers)
                 st.markdown(analysis_of_two_question_papers)
-            else:
-                st.error("Please upload a PDF file.")
-
-    if number_of_papers == "Three":
-        uploaded_paper_one = st.file_uploader("Upload your Question Paper 1", type=["pdf"])
-        uploaded_paper_two = st.file_uploader("Upload your Question Paper 2", type=["pdf"])
-        uploaded_paper_three = st.file_uploader("Upload your Question Paper 3", type=["pdf"])
-        if st.button("Analyze Paper"):
-            if uploaded_paper_one is not None and uploaded_paper_two is not None and uploaded_paper_three is not None:
-                pass
             else:
                 st.error("Please upload a PDF file.")
 
@@ -134,16 +120,6 @@ def show_generate_mock_test():
 
         else:
             st.error("Please upload a PDF file.")
-
-
-def show_generate_mind_map():
-    st.header("Generate Mind Map")
-    st.subheader("Upload Image or Mention topic name to generate mind map.")
-
-
-def show_analyse_syllabus():
-    st.header("Analyse Syllabus")
-    st.subheader("Upload Syllabus and get Suggestions for streamlined preparation.")
 
 
 if __name__ == "__main__":

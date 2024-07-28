@@ -15,7 +15,8 @@ def save_images_temporarily(uploaded_question_paper, pages_to_save):
 
     try:
         total_pages = len(convert_from_path(pdf_as_path))
-        # t.write(total_pages)
+
+        # st.write(total_pages)
 
         images_of_paper = convert_specific_pages(pdf_as_path, pages_to_save, total_pages)
 
@@ -29,7 +30,7 @@ def save_images_temporarily(uploaded_question_paper, pages_to_save):
             images_of_paper = convert_specific_pages(pdf_one, "Every Odd-numbered page", total_pages)'''
 
         temp_folder_containing_images = tempfile.mkdtemp()
-        st.write(temp_folder_containing_images)  # address of folder containing the images to be processed.
+        # st.write(temp_folder_containing_images)  # address of folder containing the images to be processed.
 
         saved_list_of_temp_images_of_question_paper = []
         for image_number, image in enumerate(images_of_paper):
@@ -45,7 +46,7 @@ def save_images_temporarily(uploaded_question_paper, pages_to_save):
     except Exception as e:
         st.error(f"An error occurred while processing the PDF: {e}")
 
-    return saved_list_of_temp_images_of_question_paper, temp_folder_containing_images
+    return saved_list_of_temp_images_of_question_paper, temp_folder_containing_images, total_pages
 
 
 def load_images_from_temporary_folder(folder_path):

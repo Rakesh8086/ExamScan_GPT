@@ -21,6 +21,11 @@ def combine_responses_and_prompt_as_one(responses_dictionary, prompt):
     return combined_prompt_with_responses
 
 
+def combine_analysis_of_two_papers_and_prompt(paper_1, paper_2, prompt):
+    combined_prompt_with_two_papers = "Paper_1 " + paper_1 + "\n" + "Paper_2" + paper_2 + "\n" + prompt
+    return combined_prompt_with_two_papers
+
+
 def to_markdown(text):
     text = text.replace('•', '  * ')
     formatted_text = textwrap.indent(text, '> ', predicate=lambda _: True)
@@ -28,8 +33,8 @@ def to_markdown(text):
 
 
 def perform_analysis(question_paper, pages_to_be_processed, llm_model):
-    path_of_images_of_uploaded_paper, folder_path = save_images_temporarily(question_paper,
-                                                                       pages_to_be_processed)
+    path_of_images_of_uploaded_paper, folder_path, total_pages = save_images_temporarily(question_paper,
+                                                                            pages_to_be_processed)
     load_saved_images = load_images_from_temporary_folder(folder_path)
     try:
         prompt_for_analysing_paper = analyse_page_by_page_prompt()
@@ -46,16 +51,46 @@ def perform_analysis(question_paper, pages_to_be_processed, llm_model):
         prompt_for_analysing_combined_responses = combined_analysis_of_every_page_prompt()
         responses_and_prompt_combined = combine_responses_and_prompt_as_one(topic_names,
                                                                             prompt_for_analysing_combined_responses)
-        combined_analysis_for_user = generate_llm_text_response(llm_model, responses_and_prompt_combined)
+        combined_analysis_of_single_paper = generate_llm_text_response(llm_model, responses_and_prompt_combined)
     except ResourceExhausted as e:
         st.error(f"API Error: {str(e)}. Please try again later.")
         return
     except Exception as e:
         st.error(f"Error in generating combined analysis: {str(e)}")
         return
-    analysis_of_question_paper = to_markdown(combined_analysis_for_user)
+    analysis_of_question_paper = to_markdown(combined_analysis_of_single_paper)
 
     return analysis_of_question_paper
+
+
+def perform_analysis_on_multiple_papers(question_paper, pages_to_be_processed, llm_model):
+    path_of_images_of_uploaded_paper, folder_path, total_pages = save_images_temporarily(question_paper,
+                                                                                         pages_to_be_processed)
+    load_saved_images = load_images_from_temporary_folder(folder_path)
+    try:
+        prompt_for_analysing_paper = analyse_page_by_page_prompt()
+        topic_names = provide_images_and_extract_topics_from_llm(load_saved_images, prompt_for_analysing_paper,
+                                                                 llm_model)
+    except ResourceExhausted as e:
+        st.error(f"API Error: {str(e)}. Please try again later.")
+        return " "
+    except Exception as e:
+        st.error(f"Error in extracting topics: {str(e)}")
+        return " "
+
+    try:
+        prompt_for_analysing_combined_responses = combined_analysis_of_every_page_prompt()
+        responses_and_prompt_combined = combine_responses_and_prompt_as_one(topic_names,
+                                                                            prompt_for_analysing_combined_responses)
+        combined_analysis_of_single_paper = generate_llm_text_response(llm_model, responses_and_prompt_combined)
+    except ResourceExhausted as e:
+        st.error(f"API Error: {str(e)}. Please try again later.")
+        return " "
+    except Exception as e:
+        st.error(f"Error in generating combined analysis: {str(e)}")
+        return " "
+
+    return combined_analysis_of_single_paper
 
 
 def perform_analysis_while_mock_test_generation(question_paper, question_type, pages_to_be_processed, llm_model):
@@ -69,10 +104,10 @@ def perform_analysis_while_mock_test_generation(question_paper, question_type, p
                                                                  llm_model)
     except ResourceExhausted as e:
         st.error(f"API Error: {str(e)}. Please try again later.")
-        return
+        return " "
     except Exception as e:
         st.error(f"Error in extracting topics: {str(e)}")
-        return
+        return " "
 
     st.write("mock test would be generated shortly!!")
     time.sleep(20)
@@ -83,11 +118,9 @@ def perform_analysis_while_mock_test_generation(question_paper, question_type, p
                                                                           llm_model)
     except ResourceExhausted as e:
         st.error(f"API Error: {str(e)}. Please try again later.")
-        return
+        return " "
     except Exception as e:
         st.error(f"Error in generating mock test: {str(e)}")
-        return
+        return " "
 
     return generated_questions, total_pages
-
-

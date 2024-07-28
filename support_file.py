@@ -7,6 +7,7 @@ from prompts_to_llm import analyse_page_by_page_prompt
 from prompts_to_llm import combined_analysis_of_every_page_prompt
 from prompts_to_llm import analyse_paper_while_generating_mock_test_prompt
 from prompts_to_llm import generate_questions_prompt
+from prompts_to_llm import generate_information_for_mind_map_topic
 from temporary_file_creation import save_images_temporarily
 from temporary_file_creation import load_images_from_temporary_folder
 import streamlit as st
@@ -124,3 +125,11 @@ def perform_analysis_while_mock_test_generation(question_paper, question_type, p
         return " "
 
     return generated_questions, total_pages
+
+
+def generate_mind_map_data(topic, llm_model):
+    mind_map_prompt = generate_information_for_mind_map_topic()
+    mind_map_prompt = mind_map_prompt + "\n" + "The topic is : " + topic
+    generated_data = generate_llm_text_response(llm_model, mind_map_prompt)
+
+    return generated_data

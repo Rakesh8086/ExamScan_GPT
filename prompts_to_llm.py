@@ -74,3 +74,20 @@ def generate_questions_prompt(mock_test_type):
         )
 
     return text_prompt
+
+
+def analysis_of_multiple_papers_prompt():
+    text_prompt = (
+        "Please perform the following tasks by using the content provided and knowing that it is a competitive exam:\n\n"
+        "1. Identify the topics that are common to the given papers."
+        "2. Identify the sub-topics that are common to the given papers."
+        "3. Identify any trends in the papers if present."
+        "4. Identify the 3 topics and its sub-topics that had the most weightage in the given papers."
+        "5. Identify 1 topic  that was easy in the given papers and 1 topic that was difficult in the given papers."
+        "6. Explain 2 topics and sub-topics on where more attention is to be given based on the given paper."
+        "Make sure that you o not include any additional notes, suggestions, advices, notes etc. Also If the given "
+        "papers are of different subject and do not have anything in common, Reply as THE GIVEN PAPERS "
+        "ARE OF DIFFERENT SUBJECTS AND DO NOT HAVE ANYTHING IN COMMON"
+    )
+
+    return text_prompt

@@ -1,7 +1,13 @@
 import streamlit as st
 import google.generativeai as genai
 from support_file import perform_analysis
+from support_file import perform_analysis_on_multiple_papers
 from support_file import perform_analysis_while_mock_test_generation
+from support_file import combine_analysis_of_two_papers_and_prompt
+from support_file import to_markdown
+from llm_interaction import generate_llm_text_response
+from prompts_to_llm import analysis_of_multiple_papers_prompt
+import time
 
 
 llm_model = genai.GenerativeModel('gemini-1.5-flash')
@@ -28,7 +34,8 @@ def main():
 def show_home():
     st.title("ExamScan-GPT")
     st.subheader("A Close Quarter Studios Product")
-    st.markdown("<h4 style='color: grey;'>Your One stop solution for Costless Exam Preparation</h2>", unsafe_allow_html=True)
+    st.markdown("<h4 style='color: grey;'>Your One stop solution for Costless Exam Preparation</h2>",
+                unsafe_allow_html=True)
     st.write("\n")
     st.markdown("<h3 style='color: blue;'>Please note that : </h2>", unsafe_allow_html=True)
     st.markdown("""
@@ -56,7 +63,6 @@ def show_analyse_question_paper():
             if uploaded_paper_one is not None:
                 analysis_of_question_paper = perform_analysis(uploaded_paper_one, pages_to_be_processed, llm_model)
                 st.markdown(analysis_of_question_paper)
-                pass
             else:
                 st.error("Please upload a PDF file.")
 
@@ -65,7 +71,18 @@ def show_analyse_question_paper():
         uploaded_paper_two = st.file_uploader("Upload your Question Paper 2", type=["pdf"])
         if st.button("Analyze Paper"):
             if uploaded_paper_one is not None and uploaded_paper_two is not None:
-                pass
+                analysis_of_question_paper_one = perform_analysis_on_multiple_papers(uploaded_paper_one,
+                                                                                     pages_to_be_processed, llm_model)
+                st.write("Hang Tight!!")
+                time.sleep(20)
+                analysis_of_question_paper_two = perform_analysis_on_multiple_papers(uploaded_paper_two,
+                                                                                     pages_to_be_processed, llm_model)
+                combined_analysis_prompt = analysis_of_multiple_papers_prompt()
+                combined_text = combine_analysis_of_two_papers_and_prompt(analysis_of_question_paper_one,
+                                                             analysis_of_question_paper_two, combined_analysis_prompt)
+                analysis_of_two_question_papers = generate_llm_text_response(llm_model, combined_text)
+                analysis_of_two_question_papers = to_markdown(analysis_of_two_question_papers)
+                st.markdown(analysis_of_two_question_papers)
             else:
                 st.error("Please upload a PDF file.")
 
@@ -91,13 +108,15 @@ def show_generate_mock_test():
                                                                                             "page"])
 
     question_type = st.sidebar.selectbox("Type of questions to be generated :",
-                                                 ["Multiple-choice", "Descriptive"])
+                                         ["Multiple-choice", "Descriptive"])
 
     uploaded_model_paper = st.file_uploader(" ", type=["pdf"])
     if st.button("Generate mock test"):
         if uploaded_model_paper is not None:
             generated_questions, total_pages = perform_analysis_while_mock_test_generation(uploaded_model_paper,
-                                                                        question_type, pages_to_be_processed, llm_model)
+                                                                                           question_type,
+                                                                                           pages_to_be_processed,
+                                                                                           llm_model)
             if total_pages >= 4:
                 introduction_page_skipper = 0
                 for image_file, response in generated_questions.items():

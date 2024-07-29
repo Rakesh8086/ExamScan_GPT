@@ -91,3 +91,16 @@ def analysis_of_multiple_papers_prompt():
     )
 
     return text_prompt
+
+
+def generate_information_for_mind_map_topic_prompt():
+    text_prompt = (
+        "Please perform the following tasks by using the content provided and knowing that it is a competitive exam:\n\n"
+        "1. Provide relevant information regarding the topic name that is given that can be used to draw a mind map "
+        "around the topic."
+        "2. Return the information in the following template. Eg. ['Central_topic', 'information_1', 'information_2'....]"
+        "3. Do not more than 10 information points."
+        "Make sure that you do not give any additional information such as title, additional_notes, suggestions, etc.."
+    )
+
+    return text_prompt

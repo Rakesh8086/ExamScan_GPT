@@ -5,8 +5,10 @@ from support_file import perform_analysis_on_multiple_papers
 from support_file import perform_analysis_while_mock_test_generation
 from support_file import combine_analysis_of_two_papers_and_prompt
 from support_file import to_markdown
+from support_file import generate_mind_map_data
 from llm_interaction import generate_llm_text_response
 from prompts_to_llm import analysis_of_multiple_papers_prompt
+from mind_map_generator import generate_mind_map_from_list
 import time
 
 
@@ -113,24 +115,28 @@ def show_generate_mock_test():
     uploaded_model_paper = st.file_uploader(" ", type=["pdf"])
     if st.button("Generate mock test"):
         if uploaded_model_paper is not None:
-            generated_questions, total_pages = perform_analysis_while_mock_test_generation(uploaded_model_paper,
-                                                                                           question_type,
-                                                                                           pages_to_be_processed,
-                                                                                           llm_model)
-            if total_pages >= 4:
-                introduction_page_skipper = 0
-                for image_file, response in generated_questions.items():
-                    introduction_page_skipper += 1
-                    if introduction_page_skipper == 1:
-                        continue
-                    else:
-                        st.write(f"Page: {image_file - 1}")
+            try:
+                generated_questions, total_pages = perform_analysis_while_mock_test_generation(uploaded_model_paper,
+                                                                                               question_type,
+                                                                                               pages_to_be_processed,
+                                                                                               llm_model)
+                if total_pages >= 4:
+                    introduction_page_skipper = 0
+                    for image_file, response in generated_questions.items():
+                        introduction_page_skipper += 1
+                        if introduction_page_skipper == 1:
+                            continue
+                        else:
+                            st.write(f"Page: {image_file - 1}")
+                            st.write(f"Response: {response}\n")
+
+                else:
+                    for image_file, response in generated_questions.items():
+                        st.write(f"Page: {image_file}")
                         st.write(f"Response: {response}\n")
 
-            else:
-                for image_file, response in generated_questions.items():
-                    st.write(f"Page: {image_file}")
-                    st.write(f"Response: {response}\n")
+            except ValueError as e:
+                st.error(f"An unexpected error occurred. Please try again later.")
 
         else:
             st.error("Please upload a PDF file.")
@@ -138,7 +144,16 @@ def show_generate_mock_test():
 
 def show_generate_mind_map():
     st.header("Generate Mind Map")
-    st.subheader("Upload Image or Mention topic name to generate mind map.")
+    st.subheader("Mention topic name to generate mind map.")
+    mind_map_type = st.sidebar.selectbox("choose type : ", ["Circo", "Dot"])
+    input_topic = st.text_input(" ")
+    if st.button("Generate Mind Map"):
+        if input_topic.strip():
+            mind_map_data_list = generate_mind_map_data(input_topic, llm_model)
+            generate_mind_map_from_list(mind_map_data_list, mind_map_type)
+            pass
+        else:
+            st.error("Please enter a topic name.")
 
 
 def show_analyse_syllabus():

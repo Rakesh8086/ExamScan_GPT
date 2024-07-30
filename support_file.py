@@ -42,10 +42,10 @@ def perform_analysis(question_paper, pages_to_be_processed, llm_model):
         topic_names = provide_images_and_extract_topics_from_llm(load_saved_images, prompt_for_analysing_paper,
                                                                  llm_model)
     except ResourceExhausted as e:
-        st.error(f"API Error: {str(e)}. Please try again later.")
+        st.error(f"API Error. Please try again later.")
         return
     except Exception as e:
-        st.error(f"Error in extracting topics: {str(e)}")
+        st.error(f"Error in extracting topics. Please try again later.")
         return
 
     try:
@@ -54,10 +54,10 @@ def perform_analysis(question_paper, pages_to_be_processed, llm_model):
                                                                             prompt_for_analysing_combined_responses)
         combined_analysis_of_single_paper = generate_llm_text_response(llm_model, responses_and_prompt_combined)
     except ResourceExhausted as e:
-        st.error(f"API Error: {str(e)}. Please try again later.")
+        st.error(f"API Error. Please try again later.")
         return
     except Exception as e:
-        st.error(f"Error in generating combined analysis: {str(e)}")
+        st.error(f"Error in generating combined analysis. Please try again later.")
         return
     analysis_of_question_paper = to_markdown(combined_analysis_of_single_paper)
 
@@ -73,10 +73,10 @@ def perform_analysis_on_multiple_papers(question_paper, pages_to_be_processed, l
         topic_names = provide_images_and_extract_topics_from_llm(load_saved_images, prompt_for_analysing_paper,
                                                                  llm_model)
     except ResourceExhausted as e:
-        st.error(f"API Error: {str(e)}. Please try again later.")
+        st.error(f"API Error.Please try again later.")
         return " "
     except Exception as e:
-        st.error(f"Error in extracting topics: {str(e)}")
+        st.error(f"Error in extracting topics. Please try again later.")
         return " "
 
     try:
@@ -85,10 +85,10 @@ def perform_analysis_on_multiple_papers(question_paper, pages_to_be_processed, l
                                                                             prompt_for_analysing_combined_responses)
         combined_analysis_of_single_paper = generate_llm_text_response(llm_model, responses_and_prompt_combined)
     except ResourceExhausted as e:
-        st.error(f"API Error: {str(e)}. Please try again later.")
+        st.error(f"API Error. Please try again later.")
         return " "
     except Exception as e:
-        st.error(f"Error in generating combined analysis: {str(e)}")
+        st.error(f"Error in generating combined analysis. Please try again later.")
         return " "
 
     return combined_analysis_of_single_paper
@@ -104,10 +104,10 @@ def perform_analysis_while_mock_test_generation(question_paper, question_type, p
         topic_names = provide_images_and_extract_topics_from_llm(load_saved_images, prompt_for_analysing_paper,
                                                                  llm_model)
     except ResourceExhausted as e:
-        st.error(f"API Error: {str(e)}. Please try again later.")
+        st.error(f"API Error. Please try again later.")
         return " "
     except Exception as e:
-        st.error(f"Error in extracting topics: {str(e)}")
+        st.error(f"Error in extracting topics. Please try again later.")
         return " "
 
     st.write("mock test would be generated shortly!!")
@@ -118,10 +118,10 @@ def perform_analysis_while_mock_test_generation(question_paper, question_type, p
         generated_questions = provide_topic_names_to_llm_to_get_questions(topic_names, questions_generate_prompt,
                                                                           llm_model)
     except ResourceExhausted as e:
-        st.error(f"API Error: {str(e)}. Please try again later.")
+        st.error(f"API Error. Please try again later.")
         return " "
     except Exception as e:
-        st.error(f"Error in generating mock test: {str(e)}")
+        st.error(f"Error in generating mock test. Please try again later.")
         return " "
 
     return generated_questions, total_pages

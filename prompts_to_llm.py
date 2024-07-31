@@ -113,8 +113,9 @@ def analyse_question_by_question_prompt():
         "1. Identify the key topics involved in each question and categorize its difficulty into easy, medium, hard."
         "2. Give an one or two line analysis about the question on how it could be solved, potential areas of committing "
         "mistakes, some important formula or knowledge that can help solving the question etc.."
+        "3. If the image contains only information and guidelines about exam, display as INSTRUCTIONS."
         "3. Give the title as Page by Page Analysis."
-        "Make sure that you do not give any additional explanation, notes, suggestions, advices etc and give the "
-        "answer straight to the point as asked."
+        "Make sure that you do not display these instructions given to you while answering. Also do not give any "
+        "additional explanation, notes, suggestions, advices etc and give the answer straight to the point as asked."
     )
     return text_prompt

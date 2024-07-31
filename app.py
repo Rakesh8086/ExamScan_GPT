@@ -22,7 +22,7 @@ def main():
 
     if page == "Home":
         show_home()
-    elif page == "Analyse Question Paper":
+    elif page == "Analyse Question Paper as Whole":
         show_analyse_question_paper()
     elif page == "Page by Page Analysis":
         show_page_by_page_analysis()
@@ -64,8 +64,13 @@ def show_analyse_question_paper():
         uploaded_paper_one = st.file_uploader("Upload your Question Paper 1", type=["pdf"])
         if st.button("Analyze Paper"):
             if uploaded_paper_one is not None:
-                analysis_of_question_paper = perform_analysis(uploaded_paper_one, pages_to_be_processed, llm_model)
-                st.markdown(analysis_of_question_paper)
+                try:
+                    analysis_of_question_paper = perform_analysis(uploaded_paper_one, pages_to_be_processed, llm_model)
+                    st.markdown(analysis_of_question_paper)
+
+                except Exception as e:
+                    st.error(f"An unexpected error occurred. Please try again later.")
+
             else:
                 st.error("Please upload a PDF file.")
 
@@ -74,19 +79,24 @@ def show_analyse_question_paper():
         uploaded_paper_two = st.file_uploader("Upload your Question Paper 2", type=["pdf"])
         if st.button("Analyze Paper"):
             if uploaded_paper_one is not None and uploaded_paper_two is not None:
-                analysis_of_question_paper_one = perform_analysis_on_multiple_papers(uploaded_paper_one,
-                                                                                     pages_to_be_processed, llm_model)
-                st.write("Hang Tight!!")
-                time.sleep(20)
-                analysis_of_question_paper_two = perform_analysis_on_multiple_papers(uploaded_paper_two,
-                                                                                     pages_to_be_processed, llm_model)
-                combined_analysis_prompt = analysis_of_multiple_papers_prompt()
-                combined_text = combine_analysis_of_two_papers_and_prompt(analysis_of_question_paper_one,
-                                                                          analysis_of_question_paper_two,
-                                                                          combined_analysis_prompt)
-                analysis_of_two_question_papers = generate_llm_text_response(llm_model, combined_text)
-                analysis_of_two_question_papers = to_markdown(analysis_of_two_question_papers)
-                st.markdown(analysis_of_two_question_papers)
+                try:
+                    analysis_of_question_paper_one = perform_analysis_on_multiple_papers(uploaded_paper_one,
+                                                                                         pages_to_be_processed, llm_model)
+                    st.write("Hang Tight!!")
+                    time.sleep(20)
+                    analysis_of_question_paper_two = perform_analysis_on_multiple_papers(uploaded_paper_two,
+                                                                                         pages_to_be_processed, llm_model)
+                    combined_analysis_prompt = analysis_of_multiple_papers_prompt()
+                    combined_text = combine_analysis_of_two_papers_and_prompt(analysis_of_question_paper_one,
+                                                                              analysis_of_question_paper_two,
+                                                                              combined_analysis_prompt)
+                    analysis_of_two_question_papers = generate_llm_text_response(llm_model, combined_text)
+                    analysis_of_two_question_papers = to_markdown(analysis_of_two_question_papers)
+                    st.markdown(analysis_of_two_question_papers)
+
+                except Exception as e:
+                    st.error(f"An unexpected error occurred. Please try again later.")
+
             else:
                 st.error("Please upload a PDF file.")
 
@@ -109,11 +119,16 @@ def show_page_by_page_analysis():
     uploaded_paper = st.file_uploader("Upload your Question Paper 1", type=["pdf"])
     if st.button("Analyze Paper"):
         if uploaded_paper is not None:
-            analysis_of_every_question = perform_analysis_in_detail(uploaded_paper, pages_to_be_processed, llm_model)
-            # st.write(analysis_of_every_question)
-            for image_file, response in analysis_of_every_question.items():
-                st.write(f"Image: {image_file}")
-                st.write(f"Response: {response}\n")
+            try:
+                analysis_of_every_question = perform_analysis_in_detail(uploaded_paper, pages_to_be_processed, llm_model)
+                # st.write(analysis_of_every_question)
+                for image_file, response in analysis_of_every_question.items():
+                    st.write(f"Image: {image_file}")
+                    st.write(f"Response: {response}\n")
+
+            except Exception as e:
+                st.error(f"An unexpected error occurred. Please try again later.")
+
         else:
             st.error("Please upload a PDF file.")
 
@@ -136,9 +151,7 @@ def show_generate_mock_test():
         if uploaded_model_paper is not None:
             try:
                 generated_questions, total_pages = perform_analysis_while_mock_test_generation(uploaded_model_paper,
-                                                                                               question_type,
-                                                                                               pages_to_be_processed,
-                                                                                               llm_model)
+                                                                        question_type, pages_to_be_processed, llm_model)
                 if total_pages >= 4:
                     introduction_page_skipper = 0
                     for image_file, response in generated_questions.items():
@@ -154,7 +167,7 @@ def show_generate_mock_test():
                         st.write(f"Page: {image_file}")
                         st.write(f"Response: {response}\n")
 
-            except ValueError as e:
+            except Exception as e:
                 st.error(f"An unexpected error occurred. Please try again later.")
 
         else:
@@ -168,9 +181,13 @@ def show_generate_mind_map():
     input_topic = st.text_input(" ")
     if st.button("Generate Mind Map"):
         if input_topic.strip():
-            mind_map_data_list = generate_mind_map_data(input_topic, llm_model)
-            generate_mind_map_from_list(mind_map_data_list, mind_map_type)
-            pass
+            try:
+                mind_map_data_list = generate_mind_map_data(input_topic, llm_model)
+                generate_mind_map_from_list(mind_map_data_list, mind_map_type)
+
+            except Exception as e:
+                st.error(f"An unexpected error occurred. Please try again later.")
+
         else:
             st.error("Please enter a topic name.")
 

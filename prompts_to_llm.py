@@ -105,3 +105,16 @@ def generate_information_for_mind_map_topic_prompt():
     )
 
     return text_prompt
+
+
+def analyse_question_by_question_prompt():
+    text_prompt = (
+        "Please perform the following tasks by using the image provided:\n\n"
+        "1. Identify the key topics involved in each question and categorize its difficulty into easy, medium, hard."
+        "2. Give an one or two line analysis about the question on how it could be solved, potential areas of committing "
+        "mistakes, some important formula or knowledge that can help solving the question etc.."
+        "3. Give the title as Page by Page Analysis."
+        "Make sure that you do not give any additional explanation, notes, suggestions, advices etc and give the "
+        "answer straight to the point as asked."
+    )
+    return text_prompt

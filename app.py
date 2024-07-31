@@ -198,10 +198,11 @@ def show_generate_mind_map():
         if input_topic.strip():
             try:
                 mind_map_data_list = generate_mind_map_data(input_topic, llm_model)
+                st.write(mind_map_data_list)
                 generate_mind_map_from_list(mind_map_data_list, mind_map_type)
 
             except Exception as e:
-                st.error(f"An unexpected error occurred. Please try again later.")
+                st.error(f"unexpected error: {e}")
 
         else:
             st.error("Please enter a topic name.")

@@ -143,22 +143,22 @@ def generate_mind_map_data(topic, llm_model):
 def perform_analysis_in_detail(question_paper, pages_to_be_processed, llm_model):
     path_of_images_of_uploaded_paper, folder_path, total_pages = save_images_temporarily(question_paper,
                                                                                          pages_to_be_processed)
-    st.write("done saving images")
+    # st.write("done saving images")
     load_saved_images = load_images_from_temporary_folder(folder_path)
-    st.write("done loading images")
+    # st.write("done loading images")
     try:
         prompt_for_analysing_paper_in_detail = analyse_question_by_question_prompt()
-        st.write("done loading prompt")
+        # st.write("done loading prompt")
         question_by_question_analysis = provide_images_and_extract_topics_from_llm(load_saved_images,
                                                                                    prompt_for_analysing_paper_in_detail,
                                                                                    llm_model)
-        st.write("done analysing questions")
+        # st.write("done analysing questions")
     except ResourceExhausted as e:
         st.error(f"API Error. Please try again later.")
         return
     except Exception as e:
         st.error(f"Error in analysing questions. Please try again later.")
         return
-    st.write("no exceptions")
+    # st.write("no exceptions")
 
     return question_by_question_analysis

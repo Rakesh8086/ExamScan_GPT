@@ -1,0 +1,17 @@
+# Exported from Render on 2024-07-31T19:08:28Z
+services:
+- type: web
+  name: ExamScan GPT
+  runtime: python
+  repo: https://github.com/Rakesh8086/ExamScan_GPT
+  branch: production/version_1
+  plan: free
+  envVars:
+  - key: GOOGLE_API_KEY
+    sync: false
+  region: oregon
+  buildCommand: | 
+    apt-get update && apt-get install -y graphviz
+    pip install -r requirements.txt
+  startCommand: streamlit run app.py
+version: "1"

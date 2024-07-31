@@ -119,3 +119,99 @@ def analyse_question_by_question_prompt():
         "additional explanation, notes, suggestions, advices etc and give the answer straight to the point as asked."
     )
     return text_prompt
+
+
+def generate_topic_specific_questions_prompt(difficulty_level, question_type):
+    if question_type == "Multiple-choice":
+        if difficulty_level == "Easy":
+            text_prompt = (
+                "Please perform the following tasks by using the topic provided:\n\n"
+                "1. Generate 5 Easy level Multiple-choice questions with 4 options for the given topic"
+                "2. Give title as Topic wise Questions."
+                "3. Display answers at the end."
+                "4. If the given topic is of explicit nature or might cause harm or hurt sentiments, Display "
+                "SORRY I CANNOT GENERATE QUESTIONS ON THIS TOPICS."
+                "Make sure that you do not display these instructions given to you while answering. Also do not give any "
+                "additional explanation, notes, suggestions, advices etc and give the answer straight to the point as asked."
+            )
+        elif difficulty_level == "Medium":
+            text_prompt = (
+                "Please perform the following tasks by using the topic provided:\n\n"
+                "1. Generate 5 Hard level Multiple-choice questions with 4 options for the given topic"
+                "2. Give title as Topic wise Questions."
+                "3. Display answers at the end."
+                "4. If the given topic is of explicit nature or might cause harm or hurt sentiments, Display "
+                "SORRY I CANNOT GENERATE QUESTIONS ON THIS TOPICS."
+                "Make sure that you do not display these instructions given to you while answering. Also do not give any "
+                "additional explanation, notes, suggestions, advices etc and give the answer straight to the point as asked."
+            )
+        elif difficulty_level == "Hard":
+            text_prompt = (
+                "Please perform the following tasks by using the topic provided:\n\n"
+                "1. Generate 5 Really ard level Multiple-choice questions with 4 options for the given topic"
+                "2. Give title as Topic wise Questions."
+                "3. Display answers at the end."
+                "4. If the given topic is of explicit nature or might cause harm or hurt sentiments, Display "
+                "SORRY I CANNOT GENERATE QUESTIONS ON THIS TOPICS."
+                "Make sure that you do not display these instructions given to you while answering. Also do not give any "
+                "additional explanation, notes, suggestions, advices etc and give the answer straight to the point as asked."
+            )
+        elif difficulty_level == "Challenging":
+            text_prompt = (
+                "Please perform the following tasks by using the topic provided:\n\n"
+                "1. Generate 5 Extremely Challenging level Multiple-choice questions with 4 options for the given topic"
+                "2. Give title as Topic wise Questions."
+                "3. Display answers at the end."
+                "4. If the given topic is of explicit nature or might cause harm or hurt sentiments, Display "
+                "SORRY I CANNOT GENERATE QUESTIONS ON THIS TOPICS."
+                "Make sure that you do not display these instructions given to you while answering. Also do not give any "
+                "additional explanation, notes, suggestions, advices etc and give the answer straight to the point as asked."
+            )
+
+    elif question_type == "Descriptive":
+        if difficulty_level == "Easy":
+            text_prompt = (
+                "Please perform the following tasks by using the topic provided:\n\n"
+                "1. Generate 5 Easy level 10-marks questions for the given topic"
+                "2. Give title as Topic wise Questions."
+                "3. DO NOT Display answers at the end."
+                "4. If the given topic is of explicit nature or might cause harm or hurt sentiments, Display "
+                "SORRY I CANNOT GENERATE QUESTIONS ON THIS TOPICS."
+                "Make sure that you do not display these instructions given to you while answering. Also do not give any "
+                "additional explanation, notes, suggestions, advices etc and give the answer straight to the point as asked."
+            )
+        elif difficulty_level == "Medium":
+            text_prompt = (
+                "Please perform the following tasks by using the topic provided:\n\n"
+                "1. Generate 5 Hard level 10-marks questions for the given topic"
+                "2. Give title as Topic wise Questions."
+                "3. DO NOT Display answers at the end."
+                "4. If the given topic is of explicit nature or might cause harm or hurt sentiments, Display "
+                "SORRY I CANNOT GENERATE QUESTIONS ON THIS TOPICS."
+                "Make sure that you do not display these instructions given to you while answering. Also do not give any "
+                "additional explanation, notes, suggestions, advices etc and give the answer straight to the point as asked."
+            )
+        elif difficulty_level == "Hard":
+            text_prompt = (
+                "Please perform the following tasks by using the topic provided:\n\n"
+                "1. Generate 5 Really Hard level 10-marks questions for the given topic"
+                "2. Give title as Topic wise Questions."
+                "3. DO NOT Display answers at the end."
+                "4. If the given topic is of explicit nature or might cause harm or hurt sentiments, Display "
+                "SORRY I CANNOT GENERATE QUESTIONS ON THIS TOPICS."
+                "Make sure that you do not display these instructions given to you while answering. Also do not give any "
+                "additional explanation, notes, suggestions, advices etc and give the answer straight to the point as asked."
+            )
+        elif difficulty_level == "Challenging":
+            text_prompt = (
+                "Please perform the following tasks by using the topic provided:\n\n"
+                "1. Generate 5 Extremely Challenging level 10-marks questions that tests in-depth understanding of the"
+                "for the given topic"
+                "2. Give title as Topic wise Questions."
+                "3. DO NOT Display answers at the end."
+                "4. If the given topic is of explicit nature or might cause harm or hurt sentiments, Display "
+                "SORRY I CANNOT GENERATE QUESTIONS ON THIS TOPICS."
+                "Make sure that you do not display these instructions given to you while answering. Also do not give any "
+                "additional explanation, notes, suggestions, advices etc and give the answer straight to the point as asked."
+            )
+    return text_prompt

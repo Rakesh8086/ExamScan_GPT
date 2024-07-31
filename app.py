@@ -105,12 +105,12 @@ def show_page_by_page_analysis():
     st.header("Page by Page Analysis")
     st.subheader("Upload question paper and get it analysed page by page, question by question.")
     pages_to_be_processed = st.sidebar.selectbox("Process :",
-                                                 ["Every page", "Every Even-numbered page", "Every Odd-numbered-page"])
+                                                 ["Every page", "Every Even-numbered page", "Every Odd-numbered page"])
     uploaded_paper = st.file_uploader("Upload your Question Paper 1", type=["pdf"])
     if st.button("Analyze Paper"):
         if uploaded_paper is not None:
             analysis_of_every_question = perform_analysis_in_detail(uploaded_paper, pages_to_be_processed, llm_model)
-            st.write(analysis_of_every_question)
+            # st.write(analysis_of_every_question)
             for image_file, response in analysis_of_every_question.items():
                 st.write(f"Image: {image_file}")
                 st.write(f"Response: {response}\n")

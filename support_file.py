@@ -9,6 +9,7 @@ from prompts_to_llm import analyse_paper_while_generating_mock_test_prompt
 from prompts_to_llm import generate_questions_prompt
 from prompts_to_llm import generate_information_for_mind_map_topic_prompt
 from prompts_to_llm import analyse_question_by_question_prompt
+from prompts_to_llm import generate_topic_specific_questions_prompt
 from temporary_file_creation import save_images_temporarily
 from temporary_file_creation import load_images_from_temporary_folder
 import streamlit as st
@@ -42,6 +43,7 @@ def perform_analysis(question_paper, pages_to_be_processed, llm_model):
         prompt_for_analysing_paper = analyse_page_by_page_prompt()
         topic_names = provide_images_and_extract_topics_from_llm(load_saved_images, prompt_for_analysing_paper,
                                                                  llm_model)
+
     except ResourceExhausted as e:
         st.error(f"API Error. Please try again later.")
         return
@@ -54,12 +56,14 @@ def perform_analysis(question_paper, pages_to_be_processed, llm_model):
         responses_and_prompt_combined = combine_responses_and_prompt_as_one(topic_names,
                                                                             prompt_for_analysing_combined_responses)
         combined_analysis_of_single_paper = generate_llm_text_response(llm_model, responses_and_prompt_combined)
+
     except ResourceExhausted as e:
         st.error(f"API Error. Please try again later.")
         return
     except Exception as e:
         st.error(f"Error in generating combined analysis. Please try again later.")
         return
+
     analysis_of_question_paper = to_markdown(combined_analysis_of_single_paper)
 
     return analysis_of_question_paper
@@ -73,6 +77,7 @@ def perform_analysis_on_multiple_papers(question_paper, pages_to_be_processed, l
         prompt_for_analysing_paper = analyse_page_by_page_prompt()
         topic_names = provide_images_and_extract_topics_from_llm(load_saved_images, prompt_for_analysing_paper,
                                                                  llm_model)
+
     except ResourceExhausted as e:
         st.error(f"API Error.Please try again later.")
         return " "
@@ -85,6 +90,7 @@ def perform_analysis_on_multiple_papers(question_paper, pages_to_be_processed, l
         responses_and_prompt_combined = combine_responses_and_prompt_as_one(topic_names,
                                                                             prompt_for_analysing_combined_responses)
         combined_analysis_of_single_paper = generate_llm_text_response(llm_model, responses_and_prompt_combined)
+
     except ResourceExhausted as e:
         st.error(f"API Error. Please try again later.")
         return " "
@@ -104,6 +110,7 @@ def perform_analysis_while_mock_test_generation(question_paper, question_type, p
         prompt_for_analysing_paper = analyse_paper_while_generating_mock_test_prompt()
         topic_names = provide_images_and_extract_topics_from_llm(load_saved_images, prompt_for_analysing_paper,
                                                                  llm_model)
+
     except ResourceExhausted as e:
         st.error(f"API Error. Please try again later.")
         return " "
@@ -118,6 +125,7 @@ def perform_analysis_while_mock_test_generation(question_paper, question_type, p
         questions_generate_prompt = generate_questions_prompt(question_type)
         generated_questions = provide_topic_names_to_llm_to_get_questions(topic_names, questions_generate_prompt,
                                                                           llm_model)
+
     except ResourceExhausted as e:
         st.error(f"API Error. Please try again later.")
         return " "
@@ -131,8 +139,9 @@ def perform_analysis_while_mock_test_generation(question_paper, question_type, p
 def generate_mind_map_data(topic, llm_model):
     try:
         mind_map_prompt = generate_information_for_mind_map_topic_prompt()
-        mind_map_prompt = mind_map_prompt + "\n" + "The topic is : " + topic
-        generated_data = generate_llm_text_response(llm_model, mind_map_prompt)
+        combined_topic_with_mind_map_prompt = mind_map_prompt + "\n" + "The topic is : " + topic
+        generated_data = generate_llm_text_response(llm_model, combined_topic_with_mind_map_prompt)
+
     except Exception as e:
         st.error(f"Error in generating mind map. Please try again later.")
         return
@@ -162,3 +171,18 @@ def perform_analysis_in_detail(question_paper, pages_to_be_processed, llm_model)
     # st.write("no exceptions")
 
     return question_by_question_analysis
+
+
+def generate_topic_specific_questions(input_topic, difficulty_level, question_type, llm_model):
+    try:
+        prompt_for_generating_questions = generate_topic_specific_questions_prompt(difficulty_level, question_type)
+        combined_topic_with_prompt = "Topic name : " + input_topic + "\n" + prompt_for_generating_questions
+        generated_questions = generate_llm_text_response(llm_model, combined_topic_with_prompt)
+
+    except Exception as e:
+        st.error(f"Error in generating questions. Please try again later.")
+
+    return generated_questions
+
+
+

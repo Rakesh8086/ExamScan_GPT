@@ -1,6 +1,8 @@
 import time
 from pylatexenc.latex2text import LatexNodes2Text
 import streamlit as st
+import html
+import re
 
 
 def process_image_with_llm(text_prompt, image, model):
@@ -85,5 +87,8 @@ def generate_llm_text_response(model, prompt):
 
 
 def latex(text):
+    text = html.unescape(text)
+    # Remove HTML tags
+    text = re.sub(r'<.*?>', '', text)
     plain_text = LatexNodes2Text().latex_to_text(text)
     return plain_text

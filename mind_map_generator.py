@@ -56,7 +56,7 @@ def generate_mind_map_from_list(keywords_list, mind_map_type):
                                    mime="image/png")
 
     except SyntaxError as e:
-        st.error(f"An unexpected error occurred. Please try again.")
+        st.error(f"An unexpected SyntaxError occurred. Please try again.")
 
     except ValueError as e:
-        st.error(f"An unexpected error occurred. Please try again.")
+        st.error(f"An unexpected ValueError occurred. Please try again.")

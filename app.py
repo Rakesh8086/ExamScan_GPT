@@ -6,25 +6,26 @@ from support_file import perform_analysis_while_mock_test_generation
 from support_file import combine_analysis_of_two_papers_and_prompt
 from support_file import to_markdown
 from support_file import generate_mind_map_data
+from support_file import perform_analysis_in_detail
 from llm_interaction import generate_llm_text_response
 from prompts_to_llm import analysis_of_multiple_papers_prompt
 from mind_map_generator import generate_mind_map_from_list
 import time
-
 
 llm_model = genai.GenerativeModel('gemini-1.5-flash')
 
 
 def main():
     st.sidebar.header("Navigation")
-    page = st.sidebar.selectbox("Choose a page", ["Home", "Analyse Question Paper", "Generate Mock Test", "Generate "
-                                                                                                          "Mind Map",
-                                                  "Analyse Syllabus"])
+    page = st.sidebar.selectbox("Choose a page", ["Home", "Analyse Question Paper as Whole", "Page by Page Analysis",
+                                                  "Generate Mock Test", "Generate Mind Map", "Analyse Syllabus"])
 
     if page == "Home":
         show_home()
     elif page == "Analyse Question Paper":
         show_analyse_question_paper()
+    elif page == "Page by Page Analysis":
+        show_page_by_page_analysis()
     elif page == "Generate Mock Test":
         show_generate_mock_test()
     elif page == "Generate Mind Map":
@@ -81,7 +82,8 @@ def show_analyse_question_paper():
                                                                                      pages_to_be_processed, llm_model)
                 combined_analysis_prompt = analysis_of_multiple_papers_prompt()
                 combined_text = combine_analysis_of_two_papers_and_prompt(analysis_of_question_paper_one,
-                                                             analysis_of_question_paper_two, combined_analysis_prompt)
+                                                                          analysis_of_question_paper_two,
+                                                                          combined_analysis_prompt)
                 analysis_of_two_question_papers = generate_llm_text_response(llm_model, combined_text)
                 analysis_of_two_question_papers = to_markdown(analysis_of_two_question_papers)
                 st.markdown(analysis_of_two_question_papers)
@@ -97,6 +99,23 @@ def show_analyse_question_paper():
                 pass
             else:
                 st.error("Please upload a PDF file.")
+
+
+def show_page_by_page_analysis():
+    st.header("Page by Page Analysis")
+    st.subheader("Upload question paper and get it analysed page by page, question by question.")
+    pages_to_be_processed = st.sidebar.selectbox("Process :",
+                                                 ["Every page", "Every Even-numbered page", "Every Odd-numbered-page"])
+    uploaded_paper = st.file_uploader("Upload your Question Paper 1", type=["pdf"])
+    if st.button("Analyze Paper"):
+        if uploaded_paper is not None:
+            analysis_of_every_question = perform_analysis_in_detail(uploaded_paper, pages_to_be_processed, llm_model)
+            st.write(analysis_of_every_question)
+            for image_file, response in analysis_of_every_question.items():
+                st.write(f"Image: {image_file}")
+                st.write(f"Response: {response}\n")
+        else:
+            st.error("Please upload a PDF file.")
 
 
 def show_generate_mock_test():

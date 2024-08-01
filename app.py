@@ -208,7 +208,7 @@ def show_generate_mind_map():
                                        mime="image/png")
 
             except Exception as e:
-                st.error(f"An unexpected error occurred. Please try again later.")
+                st.error(f"Error : {e}")
 
         else:
             st.error("Please enter a topic name.")

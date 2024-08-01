@@ -2,6 +2,7 @@ from PIL import Image, ImageDraw, ImageFont
 import math
 import tempfile
 import ast
+import streamlit as st
 
 
 def generate_mind_map_from_list(central_topic, keywords):
@@ -9,18 +10,19 @@ def generate_mind_map_from_list(central_topic, keywords):
         # Convert string representation of list to actual list.
         keywords = ast.literal_eval(keywords)
 
-    # Print statements for debugging
-    # print("Keywords List:", keywords_list)
-
     # Check if the list is empty
-    # if not keywords_list:
-    #   raise ValueError("The list of keywords is empty.")
+    if not keywords:
+        st.error("The list of keywords is empty.")
+        return
 
-    # First we create a blank image
+    # First, we create a blank image
     img = Image.new('RGB', (800, 800), color='white')
     draw = ImageDraw.Draw(img)
 
-    font = ImageFont.truetype("arial.ttf", 14)
+    try:
+        font = ImageFont.truetype("arial.ttf", 14)
+    except IOError:
+        font = ImageFont.load_default()
 
     center_x, center_y = img.width // 2, img.height // 2
 
@@ -59,9 +61,7 @@ def generate_mind_map_from_list(central_topic, keywords):
         elif i in [6, 7, 8, 9]:
             draw.line([center_x, center_y, x, y + 15], fill='black')
 
+    # Save the image to a temporary file and display it in Streamlit
     with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
         img.save(temp_file.name)
-        temp_file_path = temp_file.name
-
-    return temp_file_path
-
+        st.image(temp_file.name, caption='Generated Mind Map', use_column_width=True)

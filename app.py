@@ -200,12 +200,8 @@ def show_generate_mind_map():
             try:
                 mind_map_data_list = generate_mind_map_data(input_topic, llm_model)
                 # print(mind_map_data_list)
-                mind_map_path = generate_mind_map_from_list(input_topic, mind_map_data_list)
-                st.image(mind_map_path, caption='Generated Mind Map', use_column_width=True)
+                generate_mind_map_from_list(input_topic, mind_map_data_list)
                 # print(f"Memory usage in app: {get_memory_usage() / (1024 * 1024)} MB")
-                with open(mind_map_path, 'rb') as image_file:
-                    st.download_button(label="Download Mind Map", data=image_file, file_name="mind_map.png",
-                                       mime="image/png")
 
             except Exception as e:
                 st.error(f"Error: {e}")

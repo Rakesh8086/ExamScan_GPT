@@ -119,9 +119,9 @@ def show_page_by_page_analysis():
                                                                         llm_model)
                 # st.write(analysis_of_every_question)
                 for image_file, response in analysis_of_every_question.items():
-                    st.write(f"Image: {image_file}")
+                    st.write(f"Page: {image_file}")
                     st.write(f"Response: {response}\n")
-                print(f"Memory usage in app: {get_memory_usage() / (1024 * 1024)} MB")
+                # print(f"Memory usage in app: {get_memory_usage() / (1024 * 1024)} MB")
 
             except Exception as e:
                 st.error(f"An unexpected error occurred. Please try again later.")
@@ -202,7 +202,7 @@ def show_generate_mind_map():
                 # print(mind_map_data_list)
                 mind_map_path = generate_mind_map_from_list(input_topic, mind_map_data_list)
                 st.image(mind_map_path, caption='Generated Mind Map', use_column_width=True)
-                print(f"Memory usage in app: {get_memory_usage() / (1024 * 1024)} MB")
+                # print(f"Memory usage in app: {get_memory_usage() / (1024 * 1024)} MB")
                 with open(mind_map_path, 'rb') as image_file:
                     st.download_button(label="Download Mind Map", data=image_file, file_name="mind_map.png",
                                        mime="image/png")

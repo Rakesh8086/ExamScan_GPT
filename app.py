@@ -194,6 +194,7 @@ def show_generate_topic_specific_questions():
 def show_generate_mind_map():
     st.header("Generate Mind Map")
     st.subheader("Mention topic name to generate mind map.")
+    st.write("Press CTRL+P or click on : and press print option to print the mind map.")
     input_topic = st.text_input(" ")
     if st.button("Generate Mind Map"):
         if input_topic.strip():
@@ -204,7 +205,7 @@ def show_generate_mind_map():
                 # print(f"Memory usage in app: {get_memory_usage() / (1024 * 1024)} MB")
 
             except Exception as e:
-                st.error(f"Error: {e}")
+                st.error(f"An unexpected error occurred. Please try again later.")
 
         else:
             st.error("Please enter a topic name.")

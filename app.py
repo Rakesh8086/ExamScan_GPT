@@ -12,6 +12,7 @@ from llm_interaction import generate_llm_text_response
 from prompts_to_llm import analysis_of_multiple_papers_prompt
 from mind_map_generator import generate_mind_map_from_list
 import time
+from temporary_file_creation import get_memory_usage
 
 llm_model = genai.GenerativeModel('gemini-1.5-flash')
 
@@ -120,6 +121,7 @@ def show_page_by_page_analysis():
                 for image_file, response in analysis_of_every_question.items():
                     st.write(f"Image: {image_file}")
                     st.write(f"Response: {response}\n")
+                print(f"Memory usage in app: {get_memory_usage() / (1024 * 1024)} MB")
 
             except Exception as e:
                 st.error(f"An unexpected error occurred. Please try again later.")
@@ -192,13 +194,18 @@ def show_generate_topic_specific_questions():
 def show_generate_mind_map():
     st.header("Generate Mind Map")
     st.subheader("Mention topic name to generate mind map.")
-    mind_map_type = st.sidebar.selectbox("choose type : ", ["Circo", "Dot"])
     input_topic = st.text_input(" ")
     if st.button("Generate Mind Map"):
         if input_topic.strip():
             try:
                 mind_map_data_list = generate_mind_map_data(input_topic, llm_model)
-                generate_mind_map_from_list(mind_map_data_list, mind_map_type)
+                # print(mind_map_data_list)
+                mind_map_path = generate_mind_map_from_list(input_topic, mind_map_data_list)
+                st.image(mind_map_path, caption='Generated Mind Map', use_column_width=True)
+                print(f"Memory usage in app: {get_memory_usage() / (1024 * 1024)} MB")
+                with open(mind_map_path, 'rb') as image_file:
+                    st.download_button(label="Download Mind Map", data=image_file, file_name="mind_map.png",
+                                       mime="image/png")
 
             except Exception as e:
                 st.error(f"An unexpected error occurred. Please try again later.")

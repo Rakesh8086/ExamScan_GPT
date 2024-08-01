@@ -1,3 +1,4 @@
+import gc
 import textwrap
 from google.api_core.exceptions import ResourceExhausted
 from llm_interaction import provide_images_and_extract_topics_from_llm
@@ -14,6 +15,7 @@ from temporary_file_creation import save_images_temporarily
 from temporary_file_creation import load_images_from_temporary_folder
 import streamlit as st
 import time
+from temporary_file_creation import get_memory_usage
 
 
 def combine_responses_and_prompt_as_one(responses_dictionary, prompt):
@@ -64,6 +66,12 @@ def perform_analysis(question_paper, pages_to_be_processed, llm_model):
         st.error(f"Error in generating combined analysis. Please try again later.")
         return
 
+    finally:
+        # Explicitly delete the loaded images to free up memory
+        del load_saved_images
+        # Force garbage collection
+        gc.collect()
+
     analysis_of_question_paper = to_markdown(combined_analysis_of_single_paper)
 
     return analysis_of_question_paper
@@ -97,6 +105,10 @@ def perform_analysis_on_multiple_papers(question_paper, pages_to_be_processed, l
     except Exception as e:
         st.error(f"Error in generating combined analysis. Please try again later.")
         return " "
+
+    finally:
+        del load_saved_images
+        gc.collect()
 
     return combined_analysis_of_single_paper
 
@@ -133,6 +145,10 @@ def perform_analysis_while_mock_test_generation(question_paper, question_type, p
         st.error(f"Error in generating mock test. Please try again later.")
         return " "
 
+    finally:
+        del load_saved_images
+        gc.collect()
+
     return generated_questions, total_pages
 
 
@@ -161,6 +177,7 @@ def perform_analysis_in_detail(question_paper, pages_to_be_processed, llm_model)
         question_by_question_analysis = provide_images_and_extract_topics_from_llm(load_saved_images,
                                                                                    prompt_for_analysing_paper_in_detail,
                                                                                    llm_model)
+        # print(f"Memory usage in support before : {get_memory_usage() / (1024 * 1024)} MB")
         # st.write("done analysing questions")
     except ResourceExhausted as e:
         st.error(f"API Error. Please try again later.")
@@ -169,6 +186,12 @@ def perform_analysis_in_detail(question_paper, pages_to_be_processed, llm_model)
         st.error(f"Error in analysing questions. Please try again later.")
         return
     # st.write("no exceptions")
+
+    finally:
+        del load_saved_images
+        gc.collect()
+
+    # print(f"Memory usage in support: {get_memory_usage() / (1024 * 1024)} MB")
 
     return question_by_question_analysis
 
@@ -183,6 +206,3 @@ def generate_topic_specific_questions(input_topic, difficulty_level, question_ty
         st.error(f"Error in generating questions. Please try again later.")
 
     return generated_questions
-
-
-

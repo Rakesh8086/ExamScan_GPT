@@ -1,62 +1,69 @@
+from PIL import Image, ImageDraw, ImageFont
+import math
 import tempfile
-import os
-from graphviz import Digraph
 import streamlit as st
-import ast
 
 
-def generate_mind_map_from_list(keywords_list, mind_map_type):
-    try:
-        # print(keywords_list)
-        # Ensures that the input is a list, not a string representation of a list.
-        if isinstance(keywords_list, str):
-            # Convert string representation of list to actual list.
-            keywords_list = ast.literal_eval(keywords_list)
+def draw_mind_map(central_topic, keywords):
+    # Create a blank image
+    img = Image.new('RGB', (800, 800), color='white')
+    draw = ImageDraw.Draw(img)
 
-        # Print statements for debugging
-        # print("Keywords List:", keywords_list)
+    # Load a font
+    font = ImageFont.load_default()
 
-        # Check if the list is empty
-        # if not keywords_list:
-        #   raise ValueError("The list of keywords is empty.")
+    # Define the center position
+    center_x, center_y = img.width // 2, img.height // 2
 
-        central_topic = keywords_list[0]
-        # print("Central Topic:", central_topic)
-        keywords = keywords_list[1:]
-        # print("Keywords:", keywords)
+    # Draw the central topic node
+    central_bbox = draw.textbbox((0, 0), central_topic, font=font)
+    central_width, central_height = central_bbox[2] - central_bbox[0], central_bbox[3] - central_bbox[1]
+    draw.rectangle([center_x - central_width // 2 - 10, center_y - central_height // 2 - 10,
+                    center_x + central_width // 2 + 10, center_y + central_height // 2 + 10],
+                   outline='black', fill='lightblue')
+    draw.text((center_x - central_width // 2, center_y - central_height // 2), central_topic, fill='black', font=font)
 
-        if mind_map_type == "Circo":
-            mind_map = Digraph(comment='Mind Map', engine='Circo')
-            mind_map.attr(size='40,40!', nodesep='2', ranksep='2')
+    # Define the radius for the points around the central topic
+    radius = 250
+    angle_step = 360 / len(keywords)
 
-        elif mind_map_type == "Dot":
-            mind_map = Digraph(comment='Mind Map', engine='dot')
-            mind_map.attr(size='100,20!', nodesep='1', ranksep='1')
+    # Draw keyword nodes around the central topic
+    for i, keyword in enumerate(keywords):
+        angle = math.radians(i * angle_step)
+        x = center_x + int(radius * math.cos(angle))
+        y = center_y + int(radius * math.sin(angle))
 
-        # Add central topic node
-        mind_map.node('A', central_topic, shape='ellipse', style='filled', color='lightblue', width='1.5', height='0.5')
+        keyword_bbox = draw.textbbox((0, 0), keyword, font=font)
+        keyword_width, keyword_height = keyword_bbox[2] - keyword_bbox[0], keyword_bbox[3] - keyword_bbox[1]
+        draw.rectangle([x - keyword_width // 2 - 10, y - keyword_height // 2 - 10,
+                        x + keyword_width // 2 + 10, y + keyword_height // 2 + 10],
+                       outline='black', fill='lightgreen')
+        draw.text((x - keyword_width // 2, y - keyword_height // 2), keyword, fill='black', font=font)
 
-        # Add keyword nodes and connect them to the central topic
-        for i, keyword in enumerate(keywords):
-            node_id = f'B{i}'
-            mind_map.node(node_id, keyword, shape='ellipse', style='filled', color='lightgreen', width='1.5',
-                          height='0.5')
-            mind_map.edge('A', node_id)
+        # Draw lines connecting the central topic to the keywords
+        if i == 0:
+            draw.line([center_x - 10, center_y, x - 25, y], fill='black')
+        elif i == 5:
+            draw.line([center_x + 10, center_y, x + 25, y], fill='black')
+        elif i in [1, 2, 3, 4]:
+            draw.line([center_x, center_y, x, y - 15], fill='black')
+        elif i in [6, 7, 8, 9]:
+            draw.line([center_x, center_y, x, y + 15], fill='black')
 
-        # Store the mind map to a temporary file
-        with tempfile.TemporaryDirectory() as tempdirname:
-            temp_file_path = os.path.join(tempdirname, 'mind_map')
-            mind_map.render(temp_file_path, format='png', cleanup=True)
-            image_path = temp_file_path + '.png'
+    # Save the image to a temporary file
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
+        img.save(temp_file.name)
+        temp_file_path = temp_file.name
 
-            st.image(image_path, caption='Generated Mind Map', use_column_width=True)
+    return temp_file_path
 
-            with open(image_path, 'rb') as image_file:
-                st.download_button(label="Download Mind Map", data=image_file, file_name="mind_map.png",
-                                   mime="image/png")
+# Streamlit application
+st.title("Mind Map Generator")
 
-    except SyntaxError as e:
-        st.error(f"An unexpected error occurred. Please try again.")
+# Example usage
+central_topic = "Central Topic"
+keywords = ["Point 1", "Point 2", "Point 3", "Point 4", "Point 5", "Point 6", "Topic 7", "Topic 8", "Topic 9", "Topic 10"]
 
-    except ValueError as e:
-        st.error(f"An unexpected error occurred. Please try again.")
+if st.button("Generate Mind Map"):
+    mind_map_path = draw_mind_map(central_topic, keywords)
+    st.image(mind_map_path, caption='Generated Mind Map', use_column_width=True)

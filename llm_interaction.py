@@ -9,6 +9,7 @@ def process_image_with_llm(text_prompt, image, model):
     response = model.generate_content([text_prompt, image], stream=True)
     response.resolve()
     string_text = str(response.text)
+    string_text = latex(string_text)
     return string_text
 
 

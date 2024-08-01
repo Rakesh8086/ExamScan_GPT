@@ -1,9 +1,17 @@
+import gc
 import tempfile
 from pdf2image import convert_from_path
 from convert_pdf_to_images import convert_specific_pages
 import streamlit as st
 from PIL import Image
 import os
+import psutil
+
+
+def get_memory_usage():
+    process = psutil.Process(os.getpid())
+    memory_info = process.memory_info()
+    return memory_info.rss  # in bytes
 
 
 def save_images_temporarily(uploaded_question_paper, pages_to_save):
@@ -45,6 +53,12 @@ def save_images_temporarily(uploaded_question_paper, pages_to_save):
 
     except Exception as e:
         st.error(f"An error occurred while processing the PDF: {e}")
+
+    finally:
+        del images_of_paper
+        gc.collect()
+
+    # print(f"Memory usage in temp: {get_memory_usage() / (1024 * 1024)} MB")
 
     return saved_list_of_temp_images_of_question_paper, temp_folder_containing_images, total_pages
 

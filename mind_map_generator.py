@@ -20,7 +20,7 @@ def generate_mind_map_from_list(central_topic, keywords):
     draw = ImageDraw.Draw(img)
 
     try:
-        font = ImageFont.truetype("arial.ttf", 14)
+        font = ImageFont.truetype("arial.ttf", 15)
     except IOError:
         font = ImageFont.load_default()
 

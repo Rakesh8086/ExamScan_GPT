@@ -6,4 +6,4 @@
 
 4) It can generate topic-specific questions with difficult levels of difficulty such as easy, medium and hard.
 
-5) It can analyse the syllabus of the exam and identify topics and questions that are more likely to be asked. 
+5) It can generate mind maps for various topics, helping prepare for competitive exams like UPSC, and school and college exams.
